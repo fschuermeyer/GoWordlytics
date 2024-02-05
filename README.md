@@ -1,4 +1,4 @@
-# GoWordlytics
+# GoWordlytics (wip)
 
 GoWordlytics is a simple CLI tool to analyze a WordPress Website for Plugins, Themes, and other details.
 
