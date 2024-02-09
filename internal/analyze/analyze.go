@@ -9,6 +9,11 @@ type Analyze struct {
 	indicators  []string
 	hintPlugins []Plugin
 
+	vIndicatorsEnquedScripts []VersionIndicator
+	vIndicatorsRssFeed       []VersionIndicator
+	vIndicatorsLoginPage     []VersionIndicator
+	vIndicatorsMetaTag       []VersionIndicator
+
 	data Store
 }
 
@@ -21,6 +26,11 @@ type Plugin struct {
 	uri  string
 	key  string
 	slug string
+}
+
+type VersionIndicator struct {
+	indicator string
+	split     string
 }
 
 func New() *Analyze {
@@ -38,6 +48,36 @@ func New() *Analyze {
 			"wp-embed.min.js",
 			"wp-emoji-release.min.js",
 			"wp-emoji.min.js",
+		},
+		vIndicatorsMetaTag: []VersionIndicator{
+			{
+				indicator: "WordPress",
+			},
+		},
+		vIndicatorsEnquedScripts: []VersionIndicator{
+			{
+				indicator: "/wp-includes/js/wp-embed.min.js?ver=",
+			},
+			{
+				indicator: "/wp-includes/css/dist/block-library/style.min.css?ver=",
+			},
+		},
+		vIndicatorsRssFeed: []VersionIndicator{
+			{
+				indicator: "https://wordpress.org/?v=",
+			},
+		},
+		vIndicatorsLoginPage: []VersionIndicator{
+			{
+				indicator: "/wp-admin/css/forms.min.css?ver=",
+			},
+			{
+				indicator: "/wp-admin/css/login.min.css?ver=",
+			},
+			{
+				indicator: "/wp-admin/load-styles.php",
+				split:     "ver=",
+			},
 		},
 		hintPlugins: []Plugin{
 			{
