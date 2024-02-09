@@ -1,7 +1,6 @@
 package analyze
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/fschuermeyer/GoWordlytics/internal/request"
@@ -29,8 +28,6 @@ func (a *Analyze) isWordpress() bool {
 	if len(a.data.htmlIndex) == 0 {
 		return false
 	}
-
-	fmt.Println(a.data.htmlIndex)
 
 	for _, indicator := range a.indicators {
 		if strings.Contains(a.data.htmlIndex, indicator) {
