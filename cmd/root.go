@@ -43,5 +43,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP("url", "u", "", "The URL of the WordPress Website to analyze. It's must be have the format https://www.example.com and must be a valid TLD.")
+	rootCmd.Flags().StringP("url", "u", "", "The URL of the WordPress Website to analyze.")
 }
