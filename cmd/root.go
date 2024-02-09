@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fschuermeyer/GoWordlytics/internal/analyze"
 	"github.com/spf13/cobra"
 )
 
@@ -23,6 +24,14 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		report, err := analyze.NewReport(url)
+
+		if err == analyze.ERR_MALFORMED_URL {
+			fmt.Println("The URL is malformed")
+			os.Exit(1)
+		}
+
+		fmt.Println(report)
 	},
 }
 
