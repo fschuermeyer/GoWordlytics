@@ -1,9 +1,11 @@
 package analyze
 
 import (
+	"html"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/fschuermeyer/GoWordlytics/internal/request"
 )
 
 func (a *Analyze) version(url string) string {
@@ -22,7 +24,15 @@ func (a *Analyze) version(url string) string {
 	}
 
 	if len(version) == 0 {
-		return "0.0.0"
+		version = a.versionByLoginPage(url)
+	}
+
+	if len(version) == 0 {
+		version = a.versionByRssFeed(url)
+	}
+
+	if len(version) == 0 {
+		version = "0.0.0"
 	}
 
 	return version
@@ -77,10 +87,50 @@ func (a *Analyze) versionByEnquedScripts(doc *goquery.Document) string {
 	return ""
 }
 
-func (a *Analyze) versionByRssFeed() string {
-	return "1.0"
+func (a *Analyze) versionByRssFeed(url string) string {
+
+	return "1.0.0"
 }
 
-func (a *Analyze) versionByLoginPage() string {
-	return "1.0"
+func (a *Analyze) versionByLoginPage(url string) string {
+	limit, err := request.CalculateMiB(4)
+
+	if err != nil {
+		return ""
+	}
+
+	resp, err := request.Do(url+"wp-login.php", a.userAgent, limit)
+
+	if err != nil {
+		return ""
+	}
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(resp))
+
+	if err != nil {
+		return ""
+	}
+
+	version := ""
+
+	doc.Find("link").EachWithBreak(func(i int, s *goquery.Selection) bool {
+		for _, indicator := range a.vIndicatorsLoginPage {
+			attr := html.UnescapeString(strings.TrimSpace(s.AttrOr("href", "")))
+
+			split := indicator.split
+
+			if len(split) == 0 {
+				split = indicator.indicator
+			}
+
+			if strings.Contains(attr, indicator.indicator) {
+				version = strings.Split(attr, split)[1]
+				return false
+			}
+		}
+
+		return true
+	})
+
+	return version
 }
