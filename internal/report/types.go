@@ -1,31 +1,8 @@
-package analyze
-
-type Configuration struct {
-	userAgent  string
-	apiVersion string
-	apiPlugins string
-	urlPlugins string
-
-	indicators  []string
-	hintPlugins []string
-	headerMap   map[string]Header
-}
+package report
 
 type Header struct {
 	niceName    string
 	displayName string
-}
-
-type Report struct {
-	Url           string
-	IsWordPress   bool
-	HasReadme     bool
-	Version       string
-	VersionStatus string
-	Themes        []Theme
-	Plugins       []Plugin
-	PluginDetails map[string]PluginDetails
-	Status        string
 }
 
 type Theme struct {
@@ -45,13 +22,6 @@ type Theme struct {
 	Tags        []string
 	TextDomain  string
 	DomainPath  string
-}
-
-type Plugin struct {
-	Name string
-	URI  string
-	Key  string
-	Slug string
 }
 
 type PluginDetails struct {
