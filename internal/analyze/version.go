@@ -1,6 +1,7 @@
 package analyze
 
 import (
+	"encoding/xml"
 	"html"
 	"strings"
 
@@ -21,6 +22,7 @@ func (a *Analyze) version(url string) string {
 		if err == nil && len(version) == 0 {
 			version = a.versionByEnquedScripts(doc)
 		}
+
 	}
 
 	if len(version) == 0 {
@@ -43,10 +45,8 @@ func (a *Analyze) versionByMetaTag(doc *goquery.Document) string {
 
 	value := strings.TrimSpace(s.AttrOr("content", ""))
 
-	for _, indicator := range a.vIndicatorsMetaTag {
-		if strings.HasPrefix(value, indicator.indicator) {
-			return strings.ReplaceAll(value, indicator.indicator, "")
-		}
+	if strings.HasPrefix(value, a.vIndicatorsMetaTag.indicator) {
+		return strings.ReplaceAll(value, a.vIndicatorsMetaTag.indicator, "")
 	}
 
 	return ""
@@ -87,21 +87,10 @@ func (a *Analyze) versionByEnquedScripts(doc *goquery.Document) string {
 	return ""
 }
 
-func (a *Analyze) versionByRssFeed(url string) string {
-
-	return "1.0.0"
-}
-
 func (a *Analyze) versionByLoginPage(url string) string {
-	limit, err := request.CalculateMiB(4)
+	resp := a.getContent(url, "/wp-login.php", 4)
 
-	if err != nil {
-		return ""
-	}
-
-	resp, err := request.Do(url+"wp-login.php", a.userAgent, limit)
-
-	if err != nil {
+	if len(resp) == 0 {
 		return ""
 	}
 
@@ -124,8 +113,12 @@ func (a *Analyze) versionByLoginPage(url string) string {
 			}
 
 			if strings.Contains(attr, indicator.indicator) {
-				version = strings.Split(attr, split)[1]
-				return false
+				value := strings.Split(attr, split)[1]
+
+				if len(value) > 1 && len(value) < 8 {
+					version = value
+					return false
+				}
 			}
 		}
 
@@ -133,4 +126,50 @@ func (a *Analyze) versionByLoginPage(url string) string {
 	})
 
 	return version
+}
+
+type RssFeed struct {
+	Channel Channel `xml:"channel"`
+}
+
+type Channel struct {
+	Generator string `xml:"generator"`
+}
+
+func (a *Analyze) versionByRssFeed(url string) string {
+	resp := a.getContent(url, "/feed", 4)
+
+	if len(resp) == 0 {
+		return ""
+	}
+
+	var rssFeed RssFeed
+
+	err := xml.Unmarshal([]byte(resp), &rssFeed)
+
+	if err != nil {
+		return ""
+	}
+
+	if len(rssFeed.Channel.Generator) > 0 && strings.Contains(rssFeed.Channel.Generator, a.vIndicatorsRssFeed.indicator) {
+		return strings.ReplaceAll(rssFeed.Channel.Generator, a.vIndicatorsRssFeed.indicator, "")
+	}
+
+	return ""
+}
+
+func (a *Analyze) getContent(url, path string, miblimit int64) string {
+	limit, err := request.CalculateMiB(miblimit)
+
+	if err != nil {
+		return ""
+	}
+
+	resp, err := request.Do(url+path, a.userAgent, limit)
+
+	if err != nil {
+		return ""
+	}
+
+	return resp
 }
