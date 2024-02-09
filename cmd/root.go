@@ -31,7 +31,7 @@ var rootCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		fmt.Println(report)
+		report.Output()
 	},
 }
 

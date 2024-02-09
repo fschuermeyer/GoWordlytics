@@ -1,6 +1,11 @@
 package report
 
-import "github.com/fschuermeyer/GoWordlytics/internal/format"
+import (
+	"fmt"
+
+	"github.com/fatih/color"
+	"github.com/fschuermeyer/GoWordlytics/internal/format"
+)
 
 type Report struct {
 	url           string
@@ -36,4 +41,19 @@ func (r *Report) SetHasWordPress(hasWordPress bool) {
 
 func (r *Report) HasWordPress() bool {
 	return r.hasWordPress
+}
+
+func (r *Report) Output() {
+	color.White("\nGoWordlytics Report")
+	color.Blue("Report for %s", r.GetUrl())
+	fmt.Println("------------------------")
+
+	c := color.New(color.FgGreen)
+
+	c.Print("Has WordPress: ")
+	fmt.Println(r.HasWordPress())
+
+	c.Print("Version: ")
+	fmt.Println(r.version)
+	fmt.Print("------------------------\n\n")
 }
