@@ -6,6 +6,7 @@ type Report struct {
 	url           string
 	hasWordPress  bool
 	hasReadme     bool
+	hasMuPlugins  bool
 	version       string
 	versionStatus string
 	themes        []Theme
@@ -19,6 +20,10 @@ func (r *Report) SetUrl(url string) {
 	if ok {
 		r.url = url
 	}
+}
+
+func (r *Report) SetVersion(version string) {
+	r.version = version
 }
 
 func (r *Report) GetUrl() string {

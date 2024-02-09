@@ -23,5 +23,7 @@ func NewReport(url string) (report.Report, error) {
 		return r, nil
 	}
 
+	r.SetVersion(a.version(r.GetUrl()))
+
 	return r, nil
 }
