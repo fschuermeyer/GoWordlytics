@@ -8,7 +8,7 @@ import (
 	"golang.org/x/net/publicsuffix"
 )
 
-func URL(value string) (string, bool) {
+func URL(value string) (standardizedURL string, ok bool) {
 	value = strings.TrimSpace(value)
 
 	if !hasProtocol(value) {
@@ -51,6 +51,10 @@ func URL(value string) (string, bool) {
 
 	if userok {
 		host.User = &userdata
+	}
+
+	if !strings.HasSuffix(host.String(), "/") {
+		host.Path = host.Path + "/"
 	}
 
 	return host.String(), true
