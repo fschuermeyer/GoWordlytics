@@ -14,7 +14,12 @@ func NewReport(url string) (report.Report, error) {
 
 	var r report.Report
 
-	r.SetUrl(url)
+	ok := r.SetUrl(url)
+
+	if !ok {
+		return r, ERR_MALFORMED_URL
+	}
+
 	a.setUrl(url)
 	a.setBody()
 

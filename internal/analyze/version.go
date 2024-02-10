@@ -38,10 +38,12 @@ func (a *Analyze) version() string {
 func (a *Analyze) versionByMetaTag(doc *goquery.Document) string {
 	s := doc.Find("meta[name=generator]").First()
 
-	value := strings.TrimSpace(s.AttrOr("content", ""))
+	value := s.AttrOr("content", "")
 
 	if strings.HasPrefix(value, a.vIndicatorsMetaTag.indicator) {
-		return strings.ReplaceAll(value, a.vIndicatorsMetaTag.indicator, "")
+		version := strings.TrimSpace(strings.ReplaceAll(value, a.vIndicatorsMetaTag.indicator, ""))
+
+		return strings.TrimSpace(version)
 	}
 
 	return ""

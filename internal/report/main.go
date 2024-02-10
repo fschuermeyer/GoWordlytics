@@ -21,12 +21,14 @@ type Report struct {
 	status         string
 }
 
-func (r *Report) SetUrl(url string) {
+func (r *Report) SetUrl(url string) bool {
 	url, ok := format.URL(url)
 
 	if ok {
 		r.url = url
 	}
+
+	return ok
 }
 
 func (r *Report) SetVersion(version string) {
