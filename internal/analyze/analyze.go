@@ -9,6 +9,8 @@ type Analyze struct {
 	indicators  []string
 	hintPlugins []Plugin
 
+	IndicatorsReadme VersionIndicator
+
 	vIndicatorsRssFeed       VersionIndicator
 	vIndicatorsMetaTag       VersionIndicator
 	vIndicatorsEnquedScripts []VersionIndicator
@@ -49,6 +51,9 @@ func New() *Analyze {
 			"wp-embed.min.js",
 			"wp-emoji-release.min.js",
 			"wp-emoji.min.js",
+		},
+		IndicatorsReadme: VersionIndicator{
+			indicator: "https://wordpress.org",
 		},
 		vIndicatorsMetaTag: VersionIndicator{
 			indicator: "WordPress",

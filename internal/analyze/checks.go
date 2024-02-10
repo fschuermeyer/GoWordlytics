@@ -45,5 +45,5 @@ func (a *Analyze) hasReadme() bool {
 		return false
 	}
 
-	return true
+	return strings.Contains(content, a.IndicatorsReadme.indicator)
 }
