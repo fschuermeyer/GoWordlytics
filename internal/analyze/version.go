@@ -32,10 +32,6 @@ func (a *Analyze) version() string {
 		version = a.versionByRssFeed()
 	}
 
-	if len(version) == 0 {
-		version = ""
-	}
-
 	return version
 }
 
