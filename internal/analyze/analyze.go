@@ -18,6 +18,7 @@ type Analyze struct {
 }
 
 type Store struct {
+	url       string
 	htmlIndex string
 }
 
@@ -35,7 +36,7 @@ type VersionIndicator struct {
 
 func New() *Analyze {
 	return &Analyze{
-		userAgent:  "Mozilla/5.0 (compatible; GoWordlytics/1.0; +",
+		userAgent:  "Mozilla/5.0 (compatible; GoWordlytics/1.0;)",
 		apiVersion: "https://api.wordpress.org/core/version-check/1.7/",
 		apiPlugins: "https://api.wordpress.org/plugins/info/1.0/%s.json",
 		indicators: []string{

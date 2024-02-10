@@ -14,8 +14,8 @@ func NewReport(url string) (report.Report, error) {
 	var r report.Report
 
 	r.SetUrl(url)
-
-	a.setBody(r.GetUrl())
+	a.setUrl(url)
+	a.setBody()
 
 	r.SetHasWordPress(a.isWordpress())
 
@@ -23,7 +23,9 @@ func NewReport(url string) (report.Report, error) {
 		return r, nil
 	}
 
-	r.SetVersion(a.version(r.GetUrl()))
+	r.SetVersion(a.version())
+
+	r.SetHasReadme(a.hasReadme())
 
 	return r, nil
 }

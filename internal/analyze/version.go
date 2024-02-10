@@ -6,10 +6,9 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/fschuermeyer/GoWordlytics/internal/request"
 )
 
-func (a *Analyze) version(url string) string {
+func (a *Analyze) version() string {
 	var version string
 
 	if len(a.data.htmlIndex) > 0 {
@@ -26,15 +25,15 @@ func (a *Analyze) version(url string) string {
 	}
 
 	if len(version) == 0 {
-		version = a.versionByLoginPage(url)
+		version = a.versionByLoginPage()
 	}
 
 	if len(version) == 0 {
-		version = a.versionByRssFeed(url)
+		version = a.versionByRssFeed()
 	}
 
 	if len(version) == 0 {
-		version = "0.0.0"
+		version = ""
 	}
 
 	return version
@@ -87,8 +86,8 @@ func (a *Analyze) versionByEnquedScripts(doc *goquery.Document) string {
 	return ""
 }
 
-func (a *Analyze) versionByLoginPage(url string) string {
-	resp := a.getContent(url, "/wp-login.php", 4)
+func (a *Analyze) versionByLoginPage() string {
+	resp := a.getContent("/wp-login.php", 4)
 
 	if len(resp) == 0 {
 		return ""
@@ -136,8 +135,8 @@ type Channel struct {
 	Generator string `xml:"generator"`
 }
 
-func (a *Analyze) versionByRssFeed(url string) string {
-	resp := a.getContent(url, "/feed", 4)
+func (a *Analyze) versionByRssFeed() string {
+	resp := a.getContent("/feed", 4)
 
 	if len(resp) == 0 {
 		return ""
@@ -156,20 +155,4 @@ func (a *Analyze) versionByRssFeed(url string) string {
 	}
 
 	return ""
-}
-
-func (a *Analyze) getContent(url, path string, miblimit int64) string {
-	limit, err := request.CalculateMiB(miblimit)
-
-	if err != nil {
-		return ""
-	}
-
-	resp, err := request.Do(url+path, a.userAgent, limit)
-
-	if err != nil {
-		return ""
-	}
-
-	return resp
 }

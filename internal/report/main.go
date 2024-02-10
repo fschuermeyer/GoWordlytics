@@ -39,6 +39,10 @@ func (r *Report) SetHasWordPress(hasWordPress bool) {
 	r.hasWordPress = hasWordPress
 }
 
+func (r *Report) SetHasReadme(hasReadme bool) {
+	r.hasReadme = hasReadme
+}
+
 func (r *Report) HasWordPress() bool {
 	return r.hasWordPress
 }
@@ -51,9 +55,15 @@ func (r *Report) Output() {
 	c := color.New(color.FgGreen)
 
 	c.Print("Has WordPress: ")
-	fmt.Println(r.HasWordPress())
+	fmt.Println(r.hasWordPress)
 
-	c.Print("Version: ")
-	fmt.Println(r.version)
+	c.Print("Has readme.html: ")
+	fmt.Println(r.hasReadme)
+
+	if len(r.version) > 0 {
+		c.Print("Version: ")
+		fmt.Println(r.version)
+	}
+
 	fmt.Print("------------------------\n\n")
 }

@@ -6,14 +6,14 @@ import (
 	"github.com/fschuermeyer/GoWordlytics/internal/request"
 )
 
-func (a *Analyze) setBody(url string) error {
+func (a *Analyze) setBody() error {
 	size, err := request.CalculateMiB(2)
 
 	if err != nil {
 		return err
 	}
 
-	body, err := request.Do(url, a.userAgent, size)
+	body, err := request.Do(a.data.url, a.userAgent, size)
 
 	if err == request.ERR_STATUS_NOT_OK {
 		return err
@@ -36,4 +36,14 @@ func (a *Analyze) isWordpress() bool {
 	}
 
 	return false
+}
+
+func (a *Analyze) hasReadme() bool {
+	content := a.getContent("readme.html", 1)
+
+	if len(content) == 0 {
+		return false
+	}
+
+	return true
 }
