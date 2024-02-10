@@ -109,9 +109,9 @@ func TestVersionByEnquedScripts(t *testing.T) {
 			want: "",
 		},
 		{
-			name: "css link & script - scripts first",
+			name: "css link & script",
 			html: `<html><head><link rel="stylesheet" href="/wp-includes/css/dist/block-library/style.min.css?ver=7.8.9"><script src="/wp-includes/js/wp-embed.min.js?ver=5.4.2"></script></head><body></body></html>`,
-			want: "5.4.2",
+			want: "7.8.9",
 		},
 		{
 			name: "css link",
@@ -129,6 +129,62 @@ func TestVersionByEnquedScripts(t *testing.T) {
 
 			if got != tt.want {
 				t.Errorf("VersionByEnquedScripts() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+func TestVersionByLoginPage(t *testing.T) {
+	tests := []struct {
+		name string
+		resp string
+		want string
+	}{
+		{
+			name: "no link",
+			resp: `<html><head></head><body></body></html>`,
+			want: "",
+		},
+		{
+			name: "no matching link",
+			resp: `<html><head><link rel="stylesheet" href="style.css"></head><body></body></html>`,
+			want: "",
+		},
+		{
+			name: "matching link with version",
+			resp: `<html><head><link rel='stylesheet' href='https://example.com/wp-admin/load-styles.php?c=1&amp;dir=ltr&amp;load%5B%5D=dashicons,buttons,forms,l10n,login&amp;ver=4.9.8' type='text/css' media='all' /></head><body></body></html>`,
+			want: "4.9.8",
+		},
+		{
+			name: "matching link with version",
+			resp: `<html><head><link rel="stylesheet" href="https://example.com/wp-admin/load-styles.php?c=1&amp;dir=ltr&amp;load%5B%5D=dashicons,buttons,forms,l10n,login&amp;ver=1.2.0"></head><body></body></html>`,
+			want: "1.2.0",
+		},
+		{
+			name: "matchin with multiple links",
+			resp: `<html>
+			<head>
+				<link rel="stylesheet" href="https://example.com/wp-admin/load-styles.php?c=1&amp;dir=ltr&amp;load%5B%5D=dashicons,buttons,forms,l10n,login&amp;ver=1.2.0">
+				<link rel='stylesheet' id='forms-css' href='https://www.example.com/wp-admin/css/forms.min.css?ver=6.2.1' type='text/css' media='all' />
+				<link rel='stylesheet' id='l10n-css' href='https://www.example.com/wp-admin/css/l10n.min.css?ver=6.2.2' type='text/css' media='all' />
+				<link rel='stylesheet' id='login-css' href='https://www.example.com/wp-admin/css/login.min.css?ver=6.2.3' type='text/css' media='all' />
+			</html>`,
+			want: "1.2.0",
+		},
+		{
+			name: "no html",
+			resp: ``,
+			want: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := analyze.New()
+
+			got := a.VersionByLoginPage(tt.resp)
+
+			if got != tt.want {
+				t.Errorf("VersionByLoginPage() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

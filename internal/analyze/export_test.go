@@ -13,3 +13,7 @@ func (a *Analyze) VersionByMetaTag(doc *goquery.Document) string {
 func (a *Analyze) VersionByEnquedScripts(doc *goquery.Document) string {
 	return a.versionByEnquedScripts(doc)
 }
+
+func (a *Analyze) VersionByLoginPage(resp string) string {
+	return a.versionByLoginPage(resp)
+}

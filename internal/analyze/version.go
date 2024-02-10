@@ -25,7 +25,11 @@ func (a *Analyze) version() string {
 	}
 
 	if len(version) == 0 {
-		version = a.versionByLoginPage()
+		resp := a.getContent("/wp-login.php", 4)
+
+		if len(resp) != 0 {
+			version = a.versionByLoginPage(resp)
+		}
 	}
 
 	if len(version) == 0 {
@@ -50,47 +54,37 @@ func (a *Analyze) versionByMetaTag(doc *goquery.Document) string {
 }
 
 func (a *Analyze) versionByEnquedScripts(doc *goquery.Document) string {
-	for _, indicator := range a.vIndicatorsEnquedScripts {
-		var sources []*goquery.Selection
-		var attr string
+	version := ""
 
-		if strings.Contains(indicator.indicator, ".css") {
-			doc.Find("link").Each(func(i int, s *goquery.Selection) {
-				sources = append(sources, s)
-			})
-			attr = "href"
-		} else {
-			doc.Find("script").Each(func(i int, s *goquery.Selection) {
-				sources = append(sources, s)
-			})
-			attr = "src"
+	doc.Find("link,script").EachWithBreak(func(i int, s *goquery.Selection) bool {
+		attrs, ok := s.Attr("href")
+
+		if !ok {
+			attrs, ok = s.Attr("src")
 		}
 
-		for _, s := range sources {
-			attrContent := strings.TrimSpace(s.AttrOr(attr, ""))
+		if !ok {
+			return false
+		}
 
-			if len(attrContent) == 0 || !strings.Contains(attrContent, indicator.indicator) {
-				continue
-			}
+		for _, indicator := range a.vIndicatorsEnquedScripts {
+			if strings.Contains(attrs, indicator.indicator) {
+				value := strings.Split(attrs, indicator.indicator)[1]
 
-			value := strings.Split(attrContent, indicator.indicator)[1]
-
-			if len(value) > 1 && len(value) < 8 {
-				return value
+				if len(value) > 1 && len(value) < 8 {
+					version = value
+					return false
+				}
 			}
 		}
-	}
 
-	return ""
+		return true
+	})
+
+	return version
 }
 
-func (a *Analyze) versionByLoginPage() string {
-	resp := a.getContent("/wp-login.php", 4)
-
-	if len(resp) == 0 {
-		return ""
-	}
-
+func (a *Analyze) versionByLoginPage(resp string) string {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(resp))
 
 	if err != nil {
