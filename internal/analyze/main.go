@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/fschuermeyer/GoWordlytics/internal/report"
+	"github.com/fschuermeyer/GoWordlytics/internal/wordpress"
 )
 
 var ERR_MALFORMED_URL = errors.New("malformed URL")
@@ -23,9 +24,17 @@ func NewReport(url string) (report.Report, error) {
 		return r, nil
 	}
 
-	r.SetVersion(a.version())
+	version := a.version()
+
+	r.SetVersion(version)
 
 	r.SetHasReadme(a.hasReadme())
+
+	resp := wordpress.GetLatestVersion(a.userAgent, a.apiVersion, version)
+
+	if resp.Response != "error" {
+		r.SetVersionUpdate(resp.Response, resp.Current)
+	}
 
 	return r, nil
 }

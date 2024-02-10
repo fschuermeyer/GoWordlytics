@@ -2,21 +2,23 @@ package report
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/fschuermeyer/GoWordlytics/internal/format"
 )
 
 type Report struct {
-	url           string
-	hasWordPress  bool
-	hasReadme     bool
-	hasMuPlugins  bool
-	version       string
-	versionStatus string
-	themes        []Theme
-	pluginDetails map[string]PluginDetails
-	status        string
+	url            string
+	hasWordPress   bool
+	hasReadme      bool
+	hasMuPlugins   bool
+	version        string
+	versionStatus  string
+	versionCurrent string
+	themes         []Theme
+	pluginDetails  map[string]PluginDetails
+	status         string
 }
 
 func (r *Report) SetUrl(url string) {
@@ -28,7 +30,12 @@ func (r *Report) SetUrl(url string) {
 }
 
 func (r *Report) SetVersion(version string) {
-	r.version = version
+	r.version = strings.TrimSpace(version)
+}
+
+func (r *Report) SetVersionUpdate(status, current string) {
+	r.versionStatus = status
+	r.versionCurrent = current
 }
 
 func (r *Report) GetUrl() string {
@@ -62,7 +69,15 @@ func (r *Report) Output() {
 
 	if len(r.version) > 0 {
 		c.Print("Version: ")
-		fmt.Println(r.version)
+		fmt.Printf("%s ", r.version)
+
+		if len(r.versionStatus) > 0 && r.versionStatus != "error" && r.versionStatus != "latest" {
+			text := color.RedString("(%s to %s)", r.versionStatus, r.versionCurrent)
+
+			fmt.Print(text)
+		}
+
+		fmt.Println()
 	}
 
 	fmt.Print("------------------------\n\n")
