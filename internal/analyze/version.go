@@ -33,7 +33,11 @@ func (a *Analyze) version() string {
 	}
 
 	if len(version) == 0 {
-		version = a.versionByRssFeed()
+		resp := a.getContent("/feed", 4)
+
+		if len(resp) != 0 {
+			version = a.versionByRssFeed(resp)
+		}
 	}
 
 	return version
@@ -127,13 +131,7 @@ type Channel struct {
 	Generator string `xml:"generator"`
 }
 
-func (a *Analyze) versionByRssFeed() string {
-	resp := a.getContent("/feed", 4)
-
-	if len(resp) == 0 {
-		return ""
-	}
-
+func (a *Analyze) versionByRssFeed(resp string) string {
 	var rssFeed RssFeed
 
 	err := xml.Unmarshal([]byte(resp), &rssFeed)
@@ -143,7 +141,7 @@ func (a *Analyze) versionByRssFeed() string {
 	}
 
 	if len(rssFeed.Channel.Generator) > 0 && strings.Contains(rssFeed.Channel.Generator, a.vIndicatorsRssFeed.indicator) {
-		return strings.ReplaceAll(rssFeed.Channel.Generator, a.vIndicatorsRssFeed.indicator, "")
+		return strings.TrimSpace(strings.ReplaceAll(rssFeed.Channel.Generator, a.vIndicatorsRssFeed.indicator, ""))
 	}
 
 	return ""

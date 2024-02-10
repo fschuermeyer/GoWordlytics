@@ -189,3 +189,68 @@ func TestVersionByLoginPage(t *testing.T) {
 		})
 	}
 }
+func TestVersionByRssFeed(t *testing.T) {
+	tests := []struct {
+		name string
+		resp string
+		want string
+	}{
+		{
+			name: "empty response",
+			resp: "",
+			want: "",
+		},
+		{
+			name: "invalid response",
+			resp: "<rss><channel><generator>WordPress 5.5.1</generator></channel></rss>",
+			want: "",
+		},
+		{
+			name: "simple XML with withspace",
+			resp: "<rss><channel><generator> https://wordpress.org/?v=5.5.1 </generator></channel></rss>",
+			want: "5.5.1",
+		},
+		{
+			name: "no generator",
+			resp: "<rss><channel></channel></rss>",
+			want: "",
+		},
+		{
+			name: "generator correct",
+			resp: `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+								xmlns:content="http://purl.org/rss/1.0/modules/content/"
+								xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+								xmlns:dc="http://purl.org/dc/elements/1.1/"
+								xmlns:atom="http://www.w3.org/2005/Atom"
+								xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+								xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+							>
+							<channel>
+								<title>Blog &#8211; Example</title>
+								<atom:link href="https://example.com/de/blog/feed/" rel="self" type="application/rss+xml" />
+								<link>https://example.com/de</link>
+								<lastBuildDate>Fri, 09 Feb 2024 13:03:25 +0000</lastBuildDate>
+								<language>de-DE</language>
+								<sy:updatePeriod>
+								hourly	</sy:updatePeriod>
+								<sy:updateFrequency>
+								1	</sy:updateFrequency>
+								<generator>https://wordpress.org/?v=6.1.5</generator>
+							</channel>
+						</rss>`,
+			want: "6.1.5",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := analyze.New()
+
+			got := a.VersionByRssFeed(tt.resp)
+
+			if got != tt.want {
+				t.Errorf("VersionByRssFeed() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

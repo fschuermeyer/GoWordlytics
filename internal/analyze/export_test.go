@@ -17,3 +17,7 @@ func (a *Analyze) VersionByEnquedScripts(doc *goquery.Document) string {
 func (a *Analyze) VersionByLoginPage(resp string) string {
 	return a.versionByLoginPage(resp)
 }
+
+func (a *Analyze) VersionByRssFeed(resp string) string {
+	return a.versionByRssFeed(resp)
+}
