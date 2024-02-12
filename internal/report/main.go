@@ -2,6 +2,7 @@ package report
 
 import (
 	"fmt"
+	"html"
 	"strings"
 
 	"github.com/fatih/color"
@@ -98,6 +99,6 @@ func (r *Report) OutputPlugins() {
 	color.Blue("Plugins")
 
 	for _, plugin := range r.pluginDetails {
-		fmt.Printf("%s (%s) - %s - Downloaded %d | %s \n", plugin.Name, plugin.Slug, plugin.Version, plugin.Downloaded, plugin.Homepage)
+		fmt.Printf("%s (%s) - Version: %s - Downloaded: %s | %s \n", html.UnescapeString(plugin.Name), plugin.Slug, plugin.Version, format.InsertThousandSeparator(plugin.Downloaded, '.'), plugin.Homepage)
 	}
 }
