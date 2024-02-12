@@ -29,3 +29,7 @@ func (a *Analyze) GetPluginsFromLinks() []string {
 func (a *Analyze) GetPluginsFromHints() []string {
 	return a.getPluginsFromHints()
 }
+
+func (a *Analyze) ParseCSSThemeString(cssString string) map[string]string {
+	return a.parseCSSThemeString(cssString)
+}

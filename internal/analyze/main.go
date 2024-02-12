@@ -30,10 +30,7 @@ func NewReport(url string) (report.Report, error) {
 	}
 
 	version := a.version()
-
 	r.SetVersion(version)
-
-	r.SetHasReadme(a.hasReadme())
 
 	resp := wordpress.GetLatestVersion(a.userAgent, a.apiVersion, version)
 
@@ -41,7 +38,11 @@ func NewReport(url string) (report.Report, error) {
 		r.SetVersionUpdate(resp.Response, resp.Current)
 	}
 
+	r.SetHasReadme(a.hasReadme())
+
 	r.SetPlugins(a.getPlugins())
+
+	r.SetThemes(a.getThemes())
 
 	return r, nil
 }

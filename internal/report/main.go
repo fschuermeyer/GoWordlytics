@@ -40,6 +40,10 @@ func (r *Report) SetPlugins(plugins []PluginDetails) {
 	r.pluginDetails = plugins
 }
 
+func (r *Report) SetThemes(themes []Theme) {
+	r.themes = themes
+}
+
 func (r *Report) SetVersionUpdate(status, current string) {
 	r.versionStatus = status
 	r.versionCurrent = current
@@ -91,6 +95,10 @@ func (r *Report) Output() {
 		r.OutputPlugins()
 	}
 
+	if len(r.themes) > 0 {
+		r.OutputThemes()
+	}
+
 	fmt.Print("------------------------\n\n")
 }
 
@@ -100,5 +108,14 @@ func (r *Report) OutputPlugins() {
 
 	for _, plugin := range r.pluginDetails {
 		fmt.Printf("%s (%s) - Version: %s - Downloaded: %s | %s \n", html.UnescapeString(plugin.Name), plugin.Slug, plugin.Version, format.InsertThousandSeparator(plugin.Downloaded, '.'), plugin.Homepage)
+	}
+}
+
+func (r *Report) OutputThemes() {
+	fmt.Println("------------------------")
+	color.Blue("Themes")
+
+	for _, theme := range r.themes {
+		fmt.Printf("(%s)\n- %s %s - %s %s\n", theme.Description, theme.TextDomain, theme.Author, theme.AuthorURI, theme.Version)
 	}
 }
