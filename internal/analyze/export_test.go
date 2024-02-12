@@ -21,3 +21,11 @@ func (a *Analyze) VersionByLoginPage(resp string) string {
 func (a *Analyze) VersionByRssFeed(resp string) string {
 	return a.versionByRssFeed(resp)
 }
+
+func (a *Analyze) GetPluginsFromLinks(doc *goquery.Document) []string {
+	return a.getPluginsFromLinks(doc)
+}
+
+func (a *Analyze) GetPluginsFromHints(html string) []string {
+	return a.getPluginsFromHints(html)
+}

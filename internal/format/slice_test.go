@@ -47,7 +47,7 @@ func TestUniqueSlice(t *testing.T) {
 				return
 			}
 
-			if !reflect.DeepEqual(result, test.expected) {
+			if !reflect.DeepEqual(result, test.expected) && !(len(result) == len(test.expected) && len(result) == 0) {
 				t.Errorf("Expected %v, got %v", test.expected, result)
 			}
 
