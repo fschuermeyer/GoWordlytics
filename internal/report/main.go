@@ -17,7 +17,7 @@ type Report struct {
 	versionStatus  string
 	versionCurrent string
 	themes         []Theme
-	pluginDetails  map[string]PluginDetails
+	pluginDetails  []PluginDetails
 	status         string
 }
 
@@ -33,6 +33,10 @@ func (r *Report) SetUrl(url string) bool {
 
 func (r *Report) SetVersion(version string) {
 	r.version = strings.TrimSpace(version)
+}
+
+func (r *Report) SetPlugins(plugins []PluginDetails) {
+	r.pluginDetails = plugins
 }
 
 func (r *Report) SetVersionUpdate(status, current string) {
@@ -82,5 +86,18 @@ func (r *Report) Output() {
 		fmt.Println()
 	}
 
+	if len(r.pluginDetails) > 0 {
+		r.OutputPlugins()
+	}
+
 	fmt.Print("------------------------\n\n")
+}
+
+func (r *Report) OutputPlugins() {
+	fmt.Println("------------------------")
+	color.Blue("Plugins")
+
+	for _, plugin := range r.pluginDetails {
+		fmt.Printf("%s (%s) - %s - Downloaded %d | %s \n", plugin.Name, plugin.Slug, plugin.Version, plugin.Downloaded, plugin.Homepage)
+	}
 }

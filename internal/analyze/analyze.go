@@ -6,7 +6,9 @@ type Analyze struct {
 	apiPlugins string
 	urlPlugins string
 
-	indicators  []string
+	indicators       []string
+	pluginIndicators []string
+
 	hintPlugins []Plugin
 
 	IndicatorsReadme VersionIndicator
@@ -51,6 +53,12 @@ func New() *Analyze {
 			"wp-embed.min.js",
 			"wp-emoji-release.min.js",
 			"wp-emoji.min.js",
+		},
+		pluginIndicators: []string{
+			"/wp-content/plugins/",
+			"/wp-content/mu-plugins/",
+			"/content/plugins/",
+			"/content/mu-plugins/",
 		},
 		IndicatorsReadme: VersionIndicator{
 			indicator: "https://wordpress.org",
@@ -147,6 +155,12 @@ func New() *Analyze {
 				uri:  "https://de.wordpress.org/plugins/cookie-notice/",
 				key:  "<!-- / Cookie Notice plugin -->",
 				slug: "cookie-notice",
+			},
+			{
+				name: "Comet Cache",
+				uri:  "https://de.wordpress.org/plugins/comet-cache/",
+				key:  "Comet Cache is Fully Functional",
+				slug: "comet-cache",
 			},
 		},
 	}

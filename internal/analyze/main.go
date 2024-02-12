@@ -41,5 +41,7 @@ func NewReport(url string) (report.Report, error) {
 		r.SetVersionUpdate(resp.Response, resp.Current)
 	}
 
+	r.SetPlugins(a.getPlugins())
+
 	return r, nil
 }
