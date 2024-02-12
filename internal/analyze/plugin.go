@@ -54,24 +54,18 @@ func (a *Analyze) getPlugin(slug string) (report.PluginDetails, bool) {
 func (a *Analyze) getPluginsSlugs() []string {
 	var plugins []string
 
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(a.data.htmlIndex))
+	plugins = append(plugins, a.getPluginsFromLinks()...)
 
-	if err != nil {
-		return []string{}
-	}
-
-	plugins = append(plugins, a.getPluginsFromLinks(doc)...)
-
-	plugins = append(plugins, a.getPluginsFromHints(a.data.htmlIndex)...)
+	plugins = append(plugins, a.getPluginsFromHints()...)
 
 	return plugins
 }
 
-func (a *Analyze) getPluginsFromHints(html string) []string {
+func (a *Analyze) getPluginsFromHints() []string {
 	var plugins []string
 
 	for _, hint := range a.hintPlugins {
-		if strings.Contains(html, hint.key) {
+		if strings.Contains(a.data.htmlIndex, hint.key) {
 			plugins = append(plugins, hint.slug)
 		}
 	}
@@ -79,8 +73,14 @@ func (a *Analyze) getPluginsFromHints(html string) []string {
 	return plugins
 }
 
-func (a *Analyze) getPluginsFromLinks(doc *goquery.Document) []string {
+func (a *Analyze) getPluginsFromLinks() []string {
 	var plugins []string
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(a.data.htmlIndex))
+
+	if err != nil {
+		return []string{}
+	}
 
 	doc.Find("script, link").Each(func(i int, s *goquery.Selection) {
 		src, ok := s.Attr("src")
@@ -104,7 +104,7 @@ func (a *Analyze) getPluginsFromLinks(doc *goquery.Document) []string {
 				}
 
 				if len(key) > 0 {
-					plugins = append(plugins, key[0])
+					plugins = append(plugins, strings.ToLower(key[0]))
 				}
 			}
 		}
