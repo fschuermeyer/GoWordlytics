@@ -41,10 +41,10 @@ func (a *Analyze) getThemeData(name string) report.Theme {
 
 	themeMap := a.parseCSSThemeString(response)
 
-	return a.getThemeDetials(themeMap)
+	return a.getThemeDetials(themeMap, name)
 }
 
-func (a *Analyze) getThemeDetials(themeMap map[string]string) report.Theme {
+func (a *Analyze) getThemeDetials(themeMap map[string]string, name string) report.Theme {
 	themeDetails := report.Theme{}
 
 	fields := map[string]func(string){
@@ -70,6 +70,10 @@ func (a *Analyze) getThemeDetials(themeMap map[string]string) report.Theme {
 		if value, ok := themeMap[key]; ok {
 			setValue(value)
 		}
+	}
+
+	if len(themeDetails.Name) == 0 {
+		themeDetails.Name = name
 	}
 
 	return themeDetails

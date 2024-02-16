@@ -1,8 +1,8 @@
 build:
-	go build -o bin/gowordlytics cmd/root.go
+	@go build -o bin/gowordlytics cmd/root.go
 
 test:
-	go test -v ./...
+	@go test -v ./...
 
 install:
-	go install
+	@go install

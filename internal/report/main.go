@@ -5,8 +5,9 @@ import (
 	"html"
 	"strings"
 
-	"github.com/fatih/color"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/fschuermeyer/GoWordlytics/internal/format"
+	"github.com/fschuermeyer/GoWordlytics/internal/render"
 )
 
 type Report struct {
@@ -65,57 +66,86 @@ func (r *Report) HasWordPress() bool {
 	return r.hasWordPress
 }
 
-func (r *Report) Output() {
-	color.White("\nGoWordlytics Report")
-	color.Blue("Report for %s", r.GetUrl())
-	fmt.Println("------------------------")
+// Render renders the report by calling the RenderOverview, RenderPlugins, and RenderThemes methods.
+// It applies the provided headline style to the rendered sections.
+func (r *Report) Render() {
+	var headline = lipgloss.NewStyle().Foreground(lipgloss.Color("#E7D617")).Bold(true)
 
-	c := color.New(color.FgGreen)
-
-	c.Print("Has WordPress: ")
-	fmt.Println(r.hasWordPress)
-
-	c.Print("Has readme.html: ")
-	fmt.Println(r.hasReadme)
-
-	if len(r.version) > 0 {
-		c.Print("Version: ")
-		fmt.Printf("%s ", r.version)
-
-		if len(r.versionStatus) > 0 && r.versionStatus != "error" && r.versionStatus != "latest" {
-			text := color.RedString("(%s to %s)", r.versionStatus, r.versionCurrent)
-
-			fmt.Print(text)
-		}
-
-		fmt.Println()
-	}
+	r.renderOverview(headline)
 
 	if len(r.pluginDetails) > 0 {
-		r.OutputPlugins()
+		r.renderPlugins(headline)
 	}
 
 	if len(r.themes) > 0 {
-		r.OutputThemes()
+		r.renderThemes(headline)
 	}
-
-	fmt.Print("------------------------\n\n")
 }
 
-func (r *Report) OutputPlugins() {
-	fmt.Println("------------------------")
-	color.Blue("Plugins")
+// RenderOverview renders the overview of the GoWordlytics report.
+// It takes a headline lipgloss.Style as a parameter and prints the report to the console.
+// The report includes the URL and whether it is a WordPress site.
+// If the site is a WordPress site, it also includes whether it has a readme file.
+// If the report includes version information, it also includes the version number, version status, and current version.
+// The report is displayed in a table format.
+func (r *Report) renderOverview(headline lipgloss.Style) {
+	fmt.Printf("%s\n", headline.Render("GoWordlytics Report"))
+
+	headers := []string{"URL", "WordPress?"}
+	values := []string{r.GetUrl(), fmt.Sprintf("%t", r.HasWordPress())}
+
+	if r.HasWordPress() {
+		headers = append(headers, "Readme?")
+		values = append(values, fmt.Sprintf("%t", r.hasReadme))
+	}
+
+	if len(r.version) > 0 {
+		headers = append(headers, "Version")
+		values = append(values, r.version)
+
+		if len(r.versionStatus) > 0 && r.versionStatus != "error" && r.versionStatus != "latest" {
+			headers = append(headers, "Version Status")
+
+			if r.versionStatus == "upgrade" {
+				r.versionStatus = lipgloss.NewStyle().Foreground(lipgloss.Color("#F16208")).Render(r.versionStatus)
+			}
+
+			values = append(values, r.versionStatus)
+
+			headers = append(headers, "Current")
+			values = append(values, r.versionCurrent)
+		}
+	}
+
+	render.Table(headers, [][]string{values})
+}
+
+// RenderPlugins renders the plugins report with the given headline style.
+// It prints the headline and then displays a table with the plugin details,
+// including the name, slug, version, number of downloads, and homepage link.
+func (r *Report) renderPlugins(headline lipgloss.Style) {
+	fmt.Printf("%s\n", headline.Render("Plugins Report"))
+
+	rows := [][]string{}
 
 	for _, plugin := range r.pluginDetails {
-		fmt.Printf("%s (%s) - Version: %s - Downloaded: %s | %s \n", html.UnescapeString(plugin.Name), plugin.Slug, plugin.Version, format.InsertThousandSeparator(plugin.Downloaded, '.'), plugin.Homepage)
+		rows = append(rows, []string{html.UnescapeString(plugin.Name), plugin.Slug, plugin.Version, format.InsertThousandSeparator(plugin.Downloaded, '.'), plugin.Homepage})
 	}
+
+	render.Table([]string{"Name", "Slug", "Version", "Downloads", "Link"}, rows)
 }
 
-func (r *Report) OutputThemes() {
-	fmt.Println("------------------------")
-	color.Blue("Themes")
+// RenderThemes renders a report of the themes.
+// It takes a headline style as input and prints the themes' information in a table format.
+// The themes' information includes the name, description, text domain, author, author URI, and version.
+func (r *Report) renderThemes(headline lipgloss.Style) {
+
+	rows := [][]string{}
 
 	for _, theme := range r.themes {
-		fmt.Printf("(%s)\n- %s %s - %s %s\n", theme.Description, theme.TextDomain, theme.Author, theme.AuthorURI, theme.Version)
+		rows = append(rows, []string{theme.Name, theme.Description, theme.TextDomain, theme.Author, theme.AuthorURI, theme.Version})
 	}
+
+	fmt.Printf("%s\n", headline.Render("Themes Report"))
+	render.Table([]string{"Name", "Description", "TextDomain", "Author", "AuthorURI", "Version"}, rows)
 }
