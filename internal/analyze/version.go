@@ -25,7 +25,7 @@ func (a *Analyze) version() string {
 	}
 
 	if len(version) == 0 {
-		resp := a.getContent("/wp-login.php", 4)
+		resp := a.getContent("wp-login.php", 4)
 
 		if len(resp) != 0 {
 			version = a.versionByLoginPage(resp)

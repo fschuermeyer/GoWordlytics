@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/fschuermeyer/GoWordlytics/internal/format"
 	"github.com/fschuermeyer/GoWordlytics/internal/render"
+	"github.com/fschuermeyer/GoWordlytics/internal/wordpress"
 )
 
 type Report struct {
@@ -20,6 +21,7 @@ type Report struct {
 	versionCurrent string
 	themes         []Theme
 	pluginDetails  []PluginDetails
+	users          []wordpress.User
 	status         string
 }
 
@@ -43,6 +45,10 @@ func (r *Report) SetPlugins(plugins []PluginDetails) {
 
 func (r *Report) SetThemes(themes []Theme) {
 	r.themes = themes
+}
+
+func (r *Report) SetUsers(users []wordpress.User) {
+	r.users = users
 }
 
 func (r *Report) SetVersionUpdate(status, current string) {
@@ -79,6 +85,10 @@ func (r *Report) Render() {
 
 	if len(r.themes) > 0 {
 		r.renderThemes(headline)
+	}
+
+	if len(r.users) > 0 {
+		r.renderUsers(headline)
 	}
 }
 
@@ -129,10 +139,10 @@ func (r *Report) renderPlugins(headline lipgloss.Style) {
 	rows := [][]string{}
 
 	for _, plugin := range r.pluginDetails {
-		rows = append(rows, []string{html.UnescapeString(plugin.Name), plugin.Slug, plugin.Version, format.InsertThousandSeparator(plugin.Downloaded, '.'), plugin.Homepage})
+		rows = append(rows, []string{plugin.Slug, html.UnescapeString(plugin.Name), plugin.Version, format.InsertThousandSeparator(plugin.Downloaded, '.'), plugin.Homepage})
 	}
 
-	render.Table([]string{"Name", "Slug", "Version", "Downloads", "Link"}, rows)
+	render.Table([]string{"Slug", "Name", "Version", "Downloads", "Link"}, rows)
 }
 
 // RenderThemes renders a report of the themes.
@@ -148,4 +158,16 @@ func (r *Report) renderThemes(headline lipgloss.Style) {
 
 	fmt.Printf("%s\n", headline.Render("Themes Report"))
 	render.Table([]string{"Name", "Description", "TextDomain", "Author", "AuthorURI", "Version"}, rows)
+}
+
+func (r *Report) renderUsers(headline lipgloss.Style) {
+	rows := [][]string{}
+
+	for _, user := range r.users {
+		rows = append(rows, []string{fmt.Sprintf("%d", user.ID), user.Name, html.UnescapeString(user.Description), user.URL, user.Link, user.Slug})
+	}
+
+	fmt.Printf("%s\n", headline.Render("Users Report"))
+
+	render.Table([]string{"ID", "Name", "Description", "URL", "Link", "Slug"}, rows)
 }

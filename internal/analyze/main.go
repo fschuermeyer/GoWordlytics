@@ -32,7 +32,9 @@ func NewReport(url string) (report.Report, error) {
 	version := a.version()
 	r.SetVersion(version)
 
-	resp := wordpress.GetLatestVersion(a.userAgent, a.apiVersion, version)
+	api := wordpress.New(a.data.url, a.userAgent, a.apiVersion)
+
+	resp := api.GetLatestVersion(version)
 
 	if resp.Response != "error" {
 		r.SetVersionUpdate(resp.Response, resp.Current)
@@ -43,6 +45,8 @@ func NewReport(url string) (report.Report, error) {
 	r.SetPlugins(a.getPlugins())
 
 	r.SetThemes(a.getThemes())
+
+	r.SetUsers(api.GetUsers())
 
 	return r, nil
 }

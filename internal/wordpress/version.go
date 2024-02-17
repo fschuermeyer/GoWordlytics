@@ -20,16 +20,17 @@ type WordPressOffer struct {
 	MySQLVersion string `json:"mysql_version"`
 }
 
-func GetLatestVersion(ua, url, version string) WordPressOffer {
+func (api *API) GetLatestVersion(version string) WordPressOffer {
+	var url string
 
 	if len(version) > 0 {
-		url = fmt.Sprintf("%s?version=%s", url, version)
+		url = fmt.Sprintf("%s?version=%s", api.apiVersion, version)
 	}
 
-	return requestLatestVersion(ua, url)
+	return api.requestLatestVersion(api.userAgent, url)
 }
 
-func requestLatestVersion(ua, url string) WordPressOffer {
+func (api *API) requestLatestVersion(ua, url string) WordPressOffer {
 	offer := WordPressOffer{
 		Response: "error",
 	}
