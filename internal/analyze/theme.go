@@ -101,8 +101,13 @@ func (a *Analyze) getThemeNames() []string {
 			return
 		}
 
-		themes = append(themes, strings.Split(parts[1], "/")[0])
+		theme := strings.Split(parts[1], "/")[0]
 
+		themes = append(themes, theme)
+
+		if strings.Contains(theme, "-child") {
+			themes = append(themes, strings.TrimSuffix(theme, "-child"))
+		}
 	})
 
 	return format.UniqueSlice(themes)
