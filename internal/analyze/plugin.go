@@ -17,38 +17,52 @@ func (a *Analyze) getPlugins() []report.PluginDetails {
 	var pluginList []report.PluginDetails
 
 	for _, plugin := range plugins {
-		data, ok := a.getPlugin(plugin)
+		data := a.getPluginInfo(a.getPlugin(plugin))
 
-		if ok {
-			pluginList = append(pluginList, data)
-		}
+		pluginList = append(pluginList, data)
 	}
 
 	return pluginList
 }
 
-func (a *Analyze) getPlugin(slug string) (report.PluginDetails, bool) {
+func (a *Analyze) getPlugin(slug string) report.PluginDetails {
 	var plugin report.PluginDetails
+
+	plugin.Slug = slug
 
 	size, err := request.CalculateMiB(6)
 
 	if err != nil {
-		return plugin, false
+		return plugin
 	}
 
 	jsonData, err := request.Do(fmt.Sprintf(a.apiPlugins, slug), a.userAgent, size)
 
 	if jsonData == "" || err != nil {
-		return plugin, false
+		return plugin
 	}
 
 	err = json.Unmarshal([]byte(jsonData), &plugin)
 
 	if err != nil {
-		return plugin, false
+		return plugin
 	}
 
-	return plugin, true
+	return plugin
+}
+
+func (a *Analyze) getPluginInfo(plugin report.PluginDetails) report.PluginDetails {
+	for _, hint := range a.hintPlugins {
+		if hint.slug == plugin.Slug && plugin.Name == "" {
+			plugin.Name = hint.name + " (+)"
+		}
+
+		if hint.slug == plugin.Slug && plugin.Homepage == "" {
+			plugin.Homepage = hint.uri
+		}
+	}
+
+	return plugin
 }
 
 func (a *Analyze) getPluginsSlugs() []string {

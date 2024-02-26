@@ -22,7 +22,7 @@ func Do(url string, userAgent string, limit int64) (string, error) {
 		return "", err
 	}
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode != http.StatusOK && res.StatusCode != http.StatusMovedPermanently {
 		return "", ERR_STATUS_NOT_OK
 	}
 

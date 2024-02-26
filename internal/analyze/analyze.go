@@ -162,6 +162,12 @@ func New() *Analyze {
 				key:  "Comet Cache is Fully Functional",
 				slug: "comet-cache",
 			},
+			{
+				name: "Discount Rules for WooCommerce Pro",
+				uri:  "https://www.flycart.org/products/wordpress/woocommerce-discount-rules",
+				key:  "woo-discount-rules-pro",
+				slug: "woo-discount-rules-pro",
+			},
 		},
 	}
 }
