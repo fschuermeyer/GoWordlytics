@@ -41,7 +41,7 @@ func URL(value string) (standardizedURL string, ok bool) {
 
 	_, icann := publicsuffix.PublicSuffix(host.Host)
 
-	if icann == false {
+	if !icann {
 		return "", false
 	}
 

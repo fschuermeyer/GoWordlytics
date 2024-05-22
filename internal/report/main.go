@@ -15,14 +15,12 @@ type Report struct {
 	url            string
 	hasWordPress   bool
 	hasReadme      bool
-	hasMuPlugins   bool
 	version        string
 	versionStatus  string
 	versionCurrent string
 	themes         []Theme
 	pluginDetails  []PluginDetails
 	users          []wordpress.User
-	status         string
 }
 
 func (r *Report) SetUrl(url string) bool {

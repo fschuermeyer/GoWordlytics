@@ -1,10 +1,5 @@
 package report
 
-type Header struct {
-	niceName    string
-	displayName string
-}
-
 type Theme struct {
 	Name        string
 	URI         string

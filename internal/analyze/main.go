@@ -21,7 +21,10 @@ func NewReport(url string) (report.Report, error) {
 	}
 
 	a.setUrl(url)
-	a.setBody()
+
+	if err := a.setBody(); err != nil {
+		return report.Report{}, err
+	}
 
 	r.SetHasWordPress(a.isWordpress())
 
