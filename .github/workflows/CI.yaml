@@ -23,6 +23,10 @@ jobs:
       - name: Verify Dependencies
         working-directory: ./
         run: go mod verify
+      - name: Lint Golang
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
       - name: build
         working-directory: ./
         run: go build -v ./...
