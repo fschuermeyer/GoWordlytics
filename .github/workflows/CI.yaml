@@ -1,4 +1,4 @@
-name: CI Go Tests
+name: CI Go Tests & Linter
 
 on: push
 
@@ -20,11 +20,11 @@ jobs:
       - name: Verify Dependencies
         working-directory: ./
         run: go mod verify
-      - name: Lint Golang
+      - name: Go Linter
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
-      - name: build
+      - name: Build
         working-directory: ./
         run: go build -v ./...
       - name: Test
