@@ -1,9 +1,6 @@
 name: CI Go Tests
 
-on:
-  push:
-    branches:
-      - 'main'
+on: push
 
 jobs: 
   tests: 
