@@ -4,7 +4,6 @@ type Analyze struct {
 	userAgent  string
 	apiVersion string
 	apiPlugins string
-	urlPlugins string
 
 	indicators       []string
 	pluginIndicators []string
