@@ -15,8 +15,8 @@ func TestURL(t *testing.T) {
 		valid  bool
 	}{
 		{"valid url", "https://www.example.com", "https://www.example.com/", true},
-		{"wrong protocol seperator", "http:///www.example.com", "http://www.example.com/", true},
-		{"wrong multiple protocol seperator", "http://////www.example.com", "http://www.example.com/", true},
+		{"wrong protocol separator", "http:///www.example.com", "http://www.example.com/", true},
+		{"wrong multiple protocol separator", "http://////www.example.com", "http://www.example.com/", true},
 		{"valid case upper url", "HTTPS://WWW.EXAMPle.CoM", "https://www.example.com/", true},
 		{"invalid tld", "https://www.example", "", false},
 		{"not accpted protocol", "ftp://www.example.com", "", false},

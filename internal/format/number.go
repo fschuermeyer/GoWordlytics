@@ -4,7 +4,7 @@ import (
 	"strconv"
 )
 
-func InsertThousandSeparator(number int, seperator rune) string {
+func InsertThousandSeparator(number int, separator rune) string {
 	var formatedNumber []rune
 	stringNumber := strconv.Itoa(number)
 
@@ -12,7 +12,7 @@ func InsertThousandSeparator(number int, seperator rune) string {
 		formatedNumber = append([]rune{char}, formatedNumber...)
 
 		if (i%3) == 2 && len(stringNumber)-1 > i {
-			formatedNumber = append([]rune{seperator}, formatedNumber...)
+			formatedNumber = append([]rune{separator}, formatedNumber...)
 		}
 	}
 
