@@ -1,3 +1,7 @@
+linters-settings:
+  errcheck:
+    ignore: ''
+
 linters: 
   disable-all: true
   enable:
