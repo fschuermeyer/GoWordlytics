@@ -110,19 +110,19 @@ func (r *Report) renderOverview(headline lipgloss.Style) {
 	if len(r.version) > 0 {
 		headers = append(headers, "Version")
 		values = append(values, r.version)
+	}
 
-		if len(r.versionStatus) > 0 && r.versionStatus != "error" && r.versionStatus != "latest" {
-			headers = append(headers, "Version Status")
+	if len(r.versionStatus) > 0 && r.versionStatus != "error" && r.versionStatus != "latest" {
+		headers = append(headers, "Version Status")
 
-			if r.versionStatus == "upgrade" {
-				r.versionStatus = lipgloss.NewStyle().Foreground(lipgloss.Color("#F16208")).Render(r.versionStatus)
-			}
-
-			values = append(values, r.versionStatus)
-
-			headers = append(headers, "Current")
-			values = append(values, r.versionCurrent)
+		if r.versionStatus == "upgrade" {
+			r.versionStatus = lipgloss.NewStyle().Foreground(lipgloss.Color("#F16208")).Render(r.versionStatus)
 		}
+
+		values = append(values, r.versionStatus)
+
+		headers = append(headers, "Current")
+		values = append(values, r.versionCurrent)
 	}
 
 	render.Table(headers, [][]string{values})

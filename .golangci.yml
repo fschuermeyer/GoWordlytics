@@ -1,12 +1,10 @@
-linters-settings:
-  errcheck:
-    ignore: ''
 
 linters: 
   disable-all: true
   enable:
     - gosimple
     - errcheck
+    - staticcheck
     - asciicheck
     - bodyclose
     - goconst
@@ -17,3 +15,11 @@ linters:
     - godot
     - goimports
     - misspell
+    - godox
+    - nestif
+
+linters-settings:
+  errcheck:
+    ignore: ''
+  nestif:
+    min-complexity: 4
