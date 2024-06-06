@@ -12,6 +12,7 @@ runs:
     - name: Verify Dependencies
       working-directory: ./
       run: go mod verify
+      shell: bash
 
     - name: Go Linter
       uses: golangci/golangci-lint-action@v6
@@ -21,7 +22,9 @@ runs:
     - name: Build
       working-directory: ./
       run: go build -v ./...
+      shell: bash
 
     - name: Test
       working-directory: ./
       run: go test -vet=off ./...
+      shell: bash
