@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/fschuermeyer/GoWordlytics/internal/report"
+	"github.com/fschuermeyer/GoWordlytics/internal/simultan"
 	"github.com/fschuermeyer/GoWordlytics/internal/wordpress"
 )
 
@@ -37,19 +38,27 @@ func NewReport(url string) (report.Report, error) {
 
 	api := wordpress.New(a.data.url, a.userAgent, a.apiVersion)
 
-	resp := api.GetLatestVersion(version)
+	simultan.Run([]func(){
+		func() {
+			resp := api.GetLatestVersion(version)
 
-	if resp.Response != "error" {
-		r.SetVersionUpdate(resp.Response, resp.Current)
-	}
-
-	r.SetHasReadme(a.hasReadme())
-
-	r.SetPlugins(a.getPlugins())
-
-	r.SetThemes(a.getThemes())
-
-	r.SetUsers(api.GetUsers())
+			if resp.Response != "error" {
+				r.SetVersionUpdate(resp.Response, resp.Current)
+			}
+		},
+		func() {
+			r.SetHasReadme(a.hasReadme())
+		},
+		func() {
+			r.SetPlugins(a.getPlugins())
+		},
+		func() {
+			r.SetThemes(a.getThemes())
+		},
+		func() {
+			r.SetUsers(api.GetUsers())
+		},
+	})
 
 	return r, nil
 }
