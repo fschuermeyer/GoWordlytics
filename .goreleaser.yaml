@@ -1,0 +1,6 @@
+release:
+  header: |
+    # Changelog ({{ .Date }})
+    All notable changes to this project will be documented in this file.
+  footer: |
+    Thanks for using this project!
