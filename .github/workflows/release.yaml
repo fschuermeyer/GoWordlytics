@@ -1,0 +1,39 @@
+name: Automatic Release based on Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch: 
+    inputs:
+      tag:
+        description: 'Tag to release'
+        required: false
+        default: 'v0.0.0'
+
+permissions: 
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Linter & Tests
+        uses: ./.github/actions/linter.yaml
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: latest
+          args: release --clean
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
