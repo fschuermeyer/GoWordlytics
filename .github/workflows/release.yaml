@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Linter & Tests
-        uses: ./.github/actions/linter.yaml
+        uses: ./.github/actions/linter
 
       - name: Checkout
         uses: actions/checkout@v4

@@ -1,0 +1,16 @@
+name: CI Go Tests & Linter
+
+on: push
+
+jobs: 
+  tests: 
+    name: Run Tests
+    strategy:
+      matrix:
+        go-version: [1.21]
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
+
+    steps: 
+      - name: Linter & Tests
+        uses: ./.github/actions/linter 
